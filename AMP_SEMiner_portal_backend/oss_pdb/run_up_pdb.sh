@@ -1,0 +1,1 @@
+nohup python up_pdb_to_oss.py 2>&1 > log_up_pdb_to_oss.txt &
