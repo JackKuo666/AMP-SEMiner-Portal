@@ -1,1 +1,0 @@
-# Build the original data table of mysql
