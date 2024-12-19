@@ -48,11 +48,11 @@ pip install -r requirements.txt
 
 # 3.set environment to .env
 ```
-DB_USER=xxx
+DB_USER={your_mysql_username}
 DB_PASSWORD=2
 DB_HOST=localhost
 DB_NAME=amps
-pdb_folder_path=/mnt/asustor/wenhui.li/02.AMP/structure/AFstr/
+pdb_folder_path={your/pdb/folder/path} 
 ```
 
 # 4.Run

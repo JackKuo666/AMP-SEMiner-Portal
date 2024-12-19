@@ -6,13 +6,13 @@ sudo apt-get install docker-compose
 
 # 2.set environment to .env
 ```
-DB_USER=xxx
+DB_USER={your mysql username}
 DB_PASSWORD=2
 DB_ROOT_PASSWORD=rootpassword
 DB_HOST=mysql
 DB_NAME=amps
-OSS_ACCESS_KEY_ID=xxx
-OSS_ACCESS_KEY_SECRET=yyy
+OSS_ACCESS_KEY_ID={your access key}
+OSS_ACCESS_KEY_SECRET={your secret key}
 OSS_ENDPOINT=https://oss-cn-hangzhou.aliyuncs.com
 OSS_REGION=cn-hangzhou
 OSS_BUCKET_NAME=lscp-tools-data
