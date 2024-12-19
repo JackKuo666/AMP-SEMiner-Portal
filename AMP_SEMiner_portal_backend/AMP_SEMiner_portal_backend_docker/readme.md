@@ -39,6 +39,9 @@ sudo docker system prune -a
 This command will delete the following:
 
 stopped container
+
 Image not used by any container
+
 unused network
+
 unused volume
