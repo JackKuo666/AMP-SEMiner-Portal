@@ -30,7 +30,7 @@ Stop service:
 sudo docker-compose down
 ```
 
-Other commands:
+# Other commands:
 
 Execute the following command to delete useless resources in Docker, including unused images, containers, networks, and volumes:
 ```bash
