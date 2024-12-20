@@ -1,5 +1,5 @@
 # Vue 3 + Vite
-
+# 1.use npm run preview 运行
 
 ### 0.项目根目录下新建.env文件
 
@@ -46,7 +46,7 @@ npm run build
 npm run preview
 ```
 
-# 2.docker 配置
+# 2.docker 运行
 将前端资源编译打包并交付给平台基建组，主要涉及以下步骤：
 
 ---
