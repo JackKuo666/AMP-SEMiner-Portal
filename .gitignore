@@ -1,3 +1,3 @@
 *.env
-AMP-SEMiner-Portal/AMP_SEMiner_portal_backend/data_source/*.txt
-AMP-SEMiner-Portal/AMP_SEMiner_portal_backend/AMP_SEMiner_portal_backend_docker/amps_backup.sql
+AMP_SEMiner_portal_backend/data_source/*.txt
+AMP_SEMiner_portal_backend/AMP_SEMiner_portal_backend_docker/amps_backup.sql

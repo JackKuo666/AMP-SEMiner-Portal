@@ -7,6 +7,7 @@ sudo apt-get install mysql-server
 ```
 mysql -u root -p
 ```
+需要将[amps_backup.sql](amps_backup.sql)文件放入该文件夹下
 ```sql
 CREATE DATABASE amps;
 mysql -u root -p amps < ../AMP_SEMiner_portal_backend_docker/amps_backup.sql

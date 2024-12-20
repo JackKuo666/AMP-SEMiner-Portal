@@ -10,5 +10,6 @@ OSS_ACCESS_KEY_SECRET=yyy
 ```
 
 ## 1. upload pdb data to aliyun oss
-
+[up_pdb_to_oss.py](up_pdb_to_oss.py)
 ## 2. get oss pdb example code
+[get_oss_pdb.py](get_oss_pdb.py)

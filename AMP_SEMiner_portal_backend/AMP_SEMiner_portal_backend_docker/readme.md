@@ -3,6 +3,7 @@
 sudo apt-get install docker-compose
 
 ```
+需要将[amps_backup.sql](amps_backup.sql)文件放入该文件夹下
 
 # 2.set environment to .env
 ```

@@ -1,4 +1,6 @@
 # Vue 3 + Vite
+
+
 ### 0.项目根目录下新建.env文件
 
 ```angular2html
@@ -10,15 +12,19 @@ VITE_MOCK_API_dev=api                        # 本地模拟数据
 
 ### 1. **确保安装依赖**
 在项目的根目录下，确保你已经安装了所有的依赖包。运行以下命令来安装：
-   ```bash
-   npm install
-   ```
+```bash
+node -v
+v20.18.0
+```
+```bash
+npm install
+```
 
 ### 2. **运行开发服务器**
 运行以下命令启动开发服务器：
-   ```bash
-   npm run dev
-   ```
+```bash
+npm run dev
+```
 
 这将执行 `package.json` 文件中定义的 `dev` 脚本。通常情况下，这会启动一个本地的开发服务器（如 Webpack Dev Server、Vite、Next.js 等），并监听你项目中的源代码文件。一旦你做出修改，开发服务器通常会自动重新加载页面。
 
@@ -103,19 +109,19 @@ server {
    COPY dist /usr/share/nginx/html
 
    # 复制自定义 Nginx 配置文件
-   COPY my-vue-app.conf /etc/nginx/conf.d/default.conf
+   COPY AMP_SEMiner_portal_frontend.conf /etc/nginx/conf.d/default.conf
    ```
 
 2. **构建镜像**
    使用 Docker 构建 Nginx 镜像：
    ```bash
-   docker build -t my-vue-app-nginx .
+   docker build -t amp_seminer_portal_frontend-nginx .
    ```
 
 3. **验证镜像**
    运行生成的 Docker 镜像以验证配置是否正确：
    ```bash
-   docker run -p 8080:80 my-vue-app-nginx
+   docker run -p 8080:80 amp_seminer_portal_frontend-nginx
    ```
    在浏览器中访问 `http://localhost:8080`，检查是否能够正确加载前端页面。
 
@@ -126,18 +132,18 @@ server {
 1. **标记镜像**
    给镜像打标签，指向公司或团队的 Docker Registry：
    ```bash
-   docker tag my-vue-app-nginx registry.example.com/my-vue-app-nginx:latest
+   docker tag amp_seminer_portal_frontend-nginx jackkuo666/amp_seminer_portal_frontend-nginx:v1
    ```
 
 2. **推送镜像**
    将镜像推送到指定的 Docker Registry：
    ```bash
-   docker push registry.example.com/my-vue-app-nginx:latest
+   docker push jackkuo666/amp_seminer_portal_frontend-nginx:v1
    ```
 
 3. **通知基建组**
    向平台基建组提供以下信息：
-  - 镜像名称和版本（例如：`registry.example.com/my-vue-app-nginx:latest`）。
+  - 镜像名称和版本（例如：`jackkuo666/amp_seminer_portal_frontend-nginx:v1`）。
   - 配置中使用的端口（默认 80）。
   - 依赖的环境变量或运行时配置（如果有）。
 
@@ -147,8 +153,8 @@ server {
 
 基建组拉取镜像后，可以使用以下命令部署镜像：
 ```bash
-docker pull registry.example.com/my-vue-app-nginx:latest
-docker run -d -p 80:80 --name my-vue-app registry.example.com/my-vue-app-nginx:latest
+docker pull jackkuo666/amp_seminer_portal_frontend-nginx:v1
+docker run -d -p 80:80 --name amp_seminer_portal_frontend-nginx jackkuo666/amp_seminer_portal_frontend-nginx:v1
 ```
 
 如果在 Kubernetes 环境下运行，建议基建组编写一个 Deployment 和 Service 配置文件，以便进行集群内的部署。
