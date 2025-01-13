@@ -1,1 +1,1 @@
-# 测试后端接口的一些代码，docker部署和python部署通用
+# Some codes for testing the backend interface are common to docker deployment and python deployment

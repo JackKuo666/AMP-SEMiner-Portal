@@ -16,6 +16,12 @@ VITE_MOCK_API_dev=api                        # 本地模拟数据
 node -v
 v20.18.0
 ```
+如果不是，需要用nvm管理node
+```bash
+nvm ls
+nvm use v20.18.0
+```
+
 ```bash
 npm install
 ```
@@ -73,7 +79,7 @@ npm run preview
 ```nginx
 server {
     listen 80;
-    server_name your-domain.com; # 替换为实际的域名或 IP 地址
+    server_name mag-ampome.aigene.org.cn; # 替换为实际的域名或 IP 地址
 
     root /usr/share/nginx/html; # 指定静态资源的路径
     index index.html;
@@ -132,18 +138,18 @@ server {
 1. **标记镜像**
    给镜像打标签，指向公司或团队的 Docker Registry：
    ```bash
-   docker tag amp_seminer_portal_frontend-nginx jackkuo666/amp_seminer_portal_frontend-nginx:v1
+   docker tag amp_seminer_portal_frontend-nginx jackkuo666/amp_seminer_portal_frontend-nginx:v2
    ```
 
 2. **推送镜像**
    将镜像推送到指定的 Docker Registry：
    ```bash
-   docker push jackkuo666/amp_seminer_portal_frontend-nginx:v1
+   docker push jackkuo666/amp_seminer_portal_frontend-nginx:v2
    ```
 
 3. **通知基建组**
    向平台基建组提供以下信息：
-  - 镜像名称和版本（例如：`jackkuo666/amp_seminer_portal_frontend-nginx:v1`）。
+  - 镜像名称和版本（例如：`jackkuo666/amp_seminer_portal_frontend-nginx:v2`）。
   - 配置中使用的端口（默认 80）。
   - 依赖的环境变量或运行时配置（如果有）。
 
@@ -153,8 +159,8 @@ server {
 
 基建组拉取镜像后，可以使用以下命令部署镜像：
 ```bash
-docker pull jackkuo666/amp_seminer_portal_frontend-nginx:v1
-docker run -d -p 80:80 --name amp_seminer_portal_frontend-nginx jackkuo666/amp_seminer_portal_frontend-nginx:v1
+docker pull jackkuo666/amp_seminer_portal_frontend-nginx:v2
+docker run -d -p 80:80 --name amp_seminer_portal_frontend-nginx jackkuo666/amp_seminer_portal_frontend-nginx:v2
 ```
 
 如果在 Kubernetes 环境下运行，建议基建组编写一个 Deployment 和 Service 配置文件，以便进行集群内的部署。
