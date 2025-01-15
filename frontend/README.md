@@ -135,6 +135,7 @@ In the configuration file, the `root` path specifies the directory where Nginx w
    Use Docker to build the Nginx image:
 
    ```bash
+   npm run build
    docker build -t amp_seminer_portal_frontend-nginx .
    ```
 

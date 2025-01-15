@@ -1,6 +1,6 @@
 # AMP_SEMiner_portal_backend_docker_build
 
-This page is intended for developers. If you are a user of this project, please use the pre-built Docker images from a different directory: [AMP_SEMiner_portal_backend_docker_use](../AMP_SEMiner_portal_backend_docker_use).
+This page is intended for developers. If you are a user of this project, please use the pre-built Docker images from a different directory: [use](../use).
 
 
 As the backend of this project uses a MySQL database, two Docker images are used to run the application via Docker Compose.
@@ -48,6 +48,9 @@ docker-compose down
 ```
 
 # 3. push image to docker hub
+*** Please note, make sure to place the [amps_backup.sql](amps_backup.sql) files outside of the current directory, otherwise the image size will become unnecessarily large.***
+
+
 build:
 ```sh
 docker build -t jackkuo666/amp_seminer_portal_backend_flask:latest .
