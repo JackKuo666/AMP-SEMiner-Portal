@@ -1,7 +1,3 @@
-Here’s the translation and refinement of your instructions:
-
----
-
 # Vue 3 + Vite  
 ### 1. Run with `npm run preview`
 
