@@ -1,5 +1,7 @@
 # AMP-SEMiner-Portal
 
+A Data Portal for Antimicrobial Peptides from Metagenome-Assembled Genomes.
+
 # Introduction
 
 This is the open-source code for the Data Portal([MAG-AMPome.aigene.org.cn](https://mag-ampome.aigene.org.cn/#/home)) of our latest article [Unveiling the Evolution of Antimicrobial Peptides in Gut Microbes via Foundation Model-Powered Framework](https://www.biorxiv.org/content/10.1101/2025.01.13.632881v1).

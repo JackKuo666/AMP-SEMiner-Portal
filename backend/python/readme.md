@@ -84,7 +84,7 @@ DB_USER={your_mysql_username}
 DB_PASSWORD=2
 DB_HOST=localhost
 DB_NAME=amps
-pdb_folder_path={your/pdb/folder/path} 
+PDB_FOLDER_PATH={your/pdb/folder/path} 
 ```
 
 # 4.Run

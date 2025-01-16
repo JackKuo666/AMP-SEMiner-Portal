@@ -1,5 +1,5 @@
-# AMP-SEMiner-Portal-backend
-This is the portal backend code for our new article AMP-SEMiner
+# backend
+This is the Data Portal backend code
 
 below are two ways to run the backend code
 

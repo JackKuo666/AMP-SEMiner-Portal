@@ -23,7 +23,7 @@ bucket_config = {
     "bucket_name": os.environ.get("OSS_BUCKET_NAME"),
 }
 
-pdb_folder_path = os.environ.get('pdb_folder_path'), 
+pdb_folder_path = os.environ.get('PDB_FOLDER_PATH'), 
 
 
 @app.route('/api/getAllAmps', methods=['GET'])

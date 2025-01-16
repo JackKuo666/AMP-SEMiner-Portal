@@ -13,7 +13,7 @@ db_config = {
     'host': os.environ.get('DB_HOST'),  
     'database': os.environ.get('DB_NAME'),  
 }
-pdb_folder_path = os.environ.get('pdb_folder_path'), 
+pdb_folder_path = os.environ.get('PDB_FOLDER_PATH'), 
 
 @app.route('/api/getAllAmps', methods=['GET'])
 def get_all_amps():
