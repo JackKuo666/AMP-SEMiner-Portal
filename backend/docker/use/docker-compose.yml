@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   flask-app:
-    image: jackkuo666/amp_seminer_portal_backend_flask:latest
+    image: jackkuo666/amp_seminer_portal_backend_flask:v10
     ports:
       - "5000:5000"
     environment:

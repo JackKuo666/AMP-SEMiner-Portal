@@ -160,11 +160,13 @@ SET
 CREATE INDEX idx_amp ON all_amp_protein_animal(AMP);
 CREATE INDEX idx_amplen ON all_amp_protein_animal(AMPlen);
 CREATE INDEX idx_proclst80 ON all_amp_protein_animal(Pro_clst80);
-
 CREATE INDEX idx_amp_clst ON all_amp_protein_animal(AMP_clst);
 
 ```
-
+针对amp新增FULLTEXT索引
+```sql
+ALTER TABLE all_amp_protein_animal ADD FULLTEXT(AMP);
+```
 # 3.导入表 SeqProperties
 ```
 cp /mnt/asustor/wenhui.li/02.AMP/predict/outputs/Token_650M_epoch15/Properties/*Properties.txt /var/lib/mysql-files/
@@ -263,4 +265,9 @@ SET
   Dim = @Dim,
   CVHP = IF(@CVHP = '' OR @CVHP IS NULL, NULL, @CVHP);
 
+```
+
+# 导出amps database:
+```sql
+mysqldump -u root -p amps > amps_backup.sql
 ```

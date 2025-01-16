@@ -2,6 +2,8 @@ from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 import mysql.connector
 import os
+from functools import lru_cache
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -15,6 +17,32 @@ db_config = {
 }
 pdb_folder_path = os.environ.get('PDB_FOLDER_PATH'), 
 
+# 将缓存大小设置为 128，具体大小可根据需求调整
+@lru_cache(maxsize=128)
+def get_cached_query(query, params):
+    """通过 lru_cache 缓存查询结果"""
+    try:
+        # 建立数据库连接
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+
+        # 执行查询
+        cursor.execute(query, params)
+        print(f"Executing query: {cursor.statement}")
+        results = cursor.fetchall()
+
+        # 返回 JSON 形式的结果
+        return json.dumps(results)
+
+    except mysql.connector.Error as err:
+        print(f"Database error: {err}")
+        return json.dumps({"error": str(err)})
+
+    finally:
+        # 确保关闭数据库连接
+        cursor.close()
+        conn.close()
+
 @app.route('/api/getAllAmps', methods=['GET'])
 def get_all_amps():
     try:
@@ -26,157 +54,83 @@ def get_all_amps():
         amplenmax = request.args.get('amplenmax', default=500, type=int)
         proClst80 = request.args.get('proClst80', default=None, type=int)
         ampClst = request.args.get('ampClst', default=None, type=int)
-        source = request.args.get('source', default='', type=str)
-        ProID = request.args.get('proID', default='', type=str)
-        Position = request.args.get('position', default='', type=str)
+        source = request.args.get('source', default=None, type=str)
+        ProID = request.args.get('proID', default=None, type=str)
+        Position = request.args.get('position', default=None, type=str)
         amp_same = request.args.get('amp_same', default=None, type=int)
-        amp = request.args.get('amp', default='', type=str)
-        sort_prop = request.args.get('sortProp', default='ProID', type=str)  # 默认排序列
-        sort_order = request.args.get('sortOrder', default='asc', type=str)  # 默认排序方向
+        amp = request.args.get('amp', default=None, type=str)
+        sort_prop = request.args.get('sortProp', default='ProID', type=str)
+        sort_order = request.args.get('sortOrder', default='asc', type=str)
 
-        # 打印查询参数
-        print(f"Query parameters - records_per_page: {records_per_page}, page: {page}, source: {source}, amplenmin: {amplenmin}, amplenmax: {amplenmax}, amp: {amp}, sortProp: {sort_prop}, sortOrder: {sort_order}")
-
-        # 连接到数据库
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor(dictionary=True)
-
-        # 先查询总记录数
-        if tables == "all_amp_protein_animal":
-            count_query = "SELECT COUNT(*) AS total_count FROM all_amp_protein_animal WHERE 1=1"
-        elif tables == "human_gut_amps":
-            count_query  = "SELECT COUNT(*) AS total_count FROM human_gut_amps WHERE 1=1"
-        else:
-            print(f"tables error: {tables}")
-            return jsonify({"error": "tables error"}), 400
-        params = []  # 存储查询参数
-
-        if tables == "all_amp_protein_animal":
-            if source:
-                count_query += " AND Source LIKE %s"
-                params.append(f"%{source}%")  # 添加参数，用于模糊匹配
-            if amp_same is None:                
-                if  amp:
-                    count_query += " AND AMP LIKE %s"
-                    params.append(f"%{amp}%")  # 添加参数，用于模糊匹配
-            else:
-                if  amp:
-                    count_query += " AND AMP = %s"
-                    params.append(amp)  # 添加参数，用于模糊匹配
-            if amplenmin is not None and amplenmin != 1:
-                count_query += " AND AMPlen >= %s"
-                params.append(amplenmin)
-            if amplenmax is not None and amplenmax != 500:
-                count_query += " AND AMPlen <= %s"
-                params.append(amplenmax)
-            if proClst80 is not None:
-                count_query += " AND Pro_clst80 = %s"
-                params.append(proClst80)
-            if ampClst is not None:
-                count_query += " AND AMP_clst = %s"
-                params.append(ampClst)
-        elif tables == "human_gut_amps":
-            if amp:
-                count_query += " AND AMP = %s"
-                params.append(amp)  
-            if source:
-                count_query += " AND Source = %s"
-                params.append(source)  
-            if ProID:
-                count_query += " AND ProID = %s"
-                params.append(ProID)  
-            if Position:
-                count_query += " AND Position = %s"
-                params.append(Position)  
-
-
-
-        # 执行查询
-        cursor.execute(count_query, tuple(params))
-        total_count = cursor.fetchone()['total_count']
-
-        # 动态 SQL 查询
-        if tables == "all_amp_protein_animal":
-            query = "SELECT * FROM all_amp_protein_animal WHERE 1=1"
-        elif tables == "human_gut_amps":
-            query  = "SELECT * FROM human_gut_amps WHERE 1=1"
-        else:
-            print(f"tables error: {tables}")
-            return jsonify({"error": "tables error"}), 400
+        # SQL 动态生成
+        count_query = f"SELECT COUNT(*) AS total_count FROM {tables} WHERE 1=1"
+        data_query = f"SELECT * FROM {tables} WHERE 1=1"
         params = []
 
-        if tables == "all_amp_protein_animal":
-            if source:
-                query += " AND Source LIKE %s"
-                params.append(f"%{source}%")
-            if amp_same is None:
-                if amp:
-                    query += " AND AMP LIKE %s"
-                    params.append(f"%{amp}%")
-            else:
-                if amp:
-                    query += " AND AMP = %s"
-                    params.append(amp)
-            if amplenmin is not None and amplenmin != 1:
-                query += " AND AMPlen >= %s"
-                params.append(amplenmin)
-            if amplenmax is not None and amplenmax != 500:
-                query += " AND AMPlen <= %s"
-                params.append(amplenmax)
-            if proClst80 is not None:
-                query += " AND Pro_clst80 = %s"
-                params.append(proClst80)
-            if ampClst is not None:
-                query += " AND AMP_clst = %s"
-                params.append(ampClst)
-        elif tables == "human_gut_amps":
+        # 添加过滤条件
+        if source:
+            count_query += " AND Source = %s"
+            data_query += " AND Source = %s"
+            params.append(f"{source}")
+        if amp_same is None:
             if amp:
-                query += " AND AMP = %s"
+                # 因为fulltext索引的限制，如果搜索词少于5个字符，使用LIKE，否则使用全文搜索
+                if len(amp) < 5:
+                    count_query += " AND AMP LIKE %s"
+                    data_query += " AND AMP LIKE %s"
+                    params.append(f"%{amp}%")
+                else:
+                    count_query += " AND MATCH(AMP) AGAINST (%s IN NATURAL LANGUAGE MODE)"
+                    data_query += " AND MATCH(AMP) AGAINST (%s IN NATURAL LANGUAGE MODE)"
+                    params.append(f"{amp}")
+        else:
+            if amp:
+                count_query += " AND AMP = %s"
+                data_query += " AND AMP = %s"
                 params.append(amp)
-            if source:
-                query += " AND Source = %s"
-                params.append(source)
-            if ProID:
-                query += " AND ProID = %s"
-                params.append(ProID)
-            if Position:
-                query += " AND Position = %s"
-                params.append(Position)
+        if amplenmin != 1:
+            count_query += " AND AMPlen >= %s"
+            data_query += " AND AMPlen >= %s"
+            params.append(amplenmin)
+        if amplenmax != 500:
+            count_query += " AND AMPlen <= %s"
+            data_query += " AND AMPlen <= %s"
+            params.append(amplenmax)
+        if proClst80 is not None:
+            count_query += " AND Pro_clst80 = %s"
+            data_query += " AND Pro_clst80 = %s"
+            params.append(proClst80)
+        if ampClst is not None:
+            count_query += " AND AMP_clst = %s"
+            data_query += " AND AMP_clst = %s"
+            params.append(ampClst)
+        if ProID:
+            count_query += " AND ProID = %s"
+            data_query += " AND ProID = %s"
+            params.append(ProID)
+        if Position:
+            count_query += " AND Position = %s"
+            data_query += " AND Position = %s"
+            params.append(Position)
 
-        
-        if tables == "all_amp_protein_animal":
-            # 添加排序逻辑
-            valid_sort_props = ['ProID', 'AMP', 'AMPlen', 'Source', 
-                                'Pro_clst80', 'Position', 'CID',
-                                'AMP_clst','Sequence',
-                                'KEGG_Pathway','seed_ortholog','GOs','KEGG_ko']  # 允许排序的字段
-            if sort_prop in valid_sort_props:
-                query += f" ORDER BY {sort_prop} {sort_order.upper()}"  # 使用 ORDER BY 子句
+        # 添加排序和分页
+        valid_sort_props = ['ProID', 'AMP', 'AMPlen', 'Source', 'Pro_clst80', 'AMP_clst']
+        if sort_prop in valid_sort_props:
+            data_query += f" ORDER BY {sort_prop} {sort_order.upper()}"
+        offset = (page - 1) * records_per_page
+        data_query += " LIMIT %s OFFSET %s"
+        params.extend([records_per_page, offset])
 
-            # 分页逻辑
-            if records_per_page > 0:
-                offset = (page - 1) * records_per_page
-                query += " LIMIT %s OFFSET %s"
-                params.extend([records_per_page, offset])
+        # 获取缓存结果
+        total_count = json.loads(get_cached_query(count_query, tuple(params[:len(params) - 2])))[0]['total_count']
+        results = json.loads(get_cached_query(data_query, tuple(params)))
 
-        # 执行数据查询
-        cursor.execute(query, tuple(params))
-        print("Executing query:", query, tuple(params))
-        results = cursor.fetchall()
-
-        # 返回总数和数据的 JSON 响应
+        # 返回 JSON 响应
         return jsonify({"total": total_count, "data": results})
 
-    except mysql.connector.Error as err:
-        # 打印错误日志
-        print(f"Database error: {err}")
-        return jsonify({"error": str(err)}), 500
-
-    finally:
-        # 关闭数据库连接
-        cursor.close()
-        conn.close()
-
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/getPdbFile', methods=['GET'])
 def get_pdb_file():

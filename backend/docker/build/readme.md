@@ -53,11 +53,11 @@ docker-compose down
 
 build:
 ```sh
-docker build -t jackkuo666/amp_seminer_portal_backend_flask:latest .
+docker build -t jackkuo666/amp_seminer_portal_backend_flask:v10 .
 ```
 push:
 ```sh
-docker push jackkuo666/amp_seminer_portal_backend_flask:latest
+docker push jackkuo666/amp_seminer_portal_backend_flask:v10
 ```
 
 # Other commands:
