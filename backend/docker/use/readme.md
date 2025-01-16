@@ -26,7 +26,7 @@ OSS_ACCESS_KEY_SECRET={your secret key}
 OSS_ENDPOINT=https://oss-cn-hangzhou.aliyuncs.com
 OSS_REGION=cn-hangzhou
 OSS_BUCKET_NAME=lscp-tools-data
-pdb_folder_path=AMP-SEMiner/
+PDB_FOLDER_PATH=AMP-SEMiner/
 ```
 
 # 3.Use Docker Compose
