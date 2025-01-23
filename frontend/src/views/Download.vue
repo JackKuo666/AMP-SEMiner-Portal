@@ -89,10 +89,10 @@ export default {
           fetchable: false, // Direct link
         },
         {
-          name: "all_amp_protein.animal.clst90_80.AMPclst95.eggnog.tsv(3.56 GB)",
+          name: "all_AMPs.tsv(1.4 GB)",
           index: "Online Data 5",
           description: "All predicted AMPs.",
-          path: "https://huggingface.co/datasets/jackkuo/AMP-SEMiner-dataset/resolve/main/all_amp_protein.animal.clst90_80.AMPclst95.eggnog.tsv",
+          path: "https://huggingface.co/datasets/jackkuo/AMP-SEMiner-dataset/resolve/main/all_AMPs.tsv",
           fetchable: false, // Direct link
         },
       ],

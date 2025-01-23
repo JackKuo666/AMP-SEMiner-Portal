@@ -121,6 +121,8 @@ def get_all_amps():
         data_query += " LIMIT %s OFFSET %s"
         params.extend([records_per_page, offset])
 
+        print(data_query, tuple(params))
+
         # 获取缓存结果
         total_count = json.loads(get_cached_query(count_query, tuple(params[:len(params) - 2])))[0]['total_count']
         results = json.loads(get_cached_query(data_query, tuple(params)))

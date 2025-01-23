@@ -34,11 +34,20 @@
                          placeholder="Enter AMP Length Max"  :min="1" :max="500" />
       </el-form-item>
       <el-form-item label="AMP">
-        <el-input
-            v-model="searchForm.amp"
-            placeholder="Enter AMP"
-            style="width: 500px;"
-        />
+        <el-autocomplete
+          v-model="searchForm.amp"
+          :fetch-suggestions="querySearch"
+          placeholder="Enter AMP"
+          style="width: 500px;"
+          @select="handleSelect"
+          popper-class="autocomplete-popper"
+          fit-input-width 
+        >
+          <!-- 自定义下拉菜单内容 -->
+          <template #default="{ item }">
+            <div class="suggestion-item">{{ item }}</div>
+          </template>
+      </el-autocomplete>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" :disabled="!isValidForm" @click="onSearch">Search</el-button>
@@ -205,7 +214,7 @@
 
 <script setup>
 import {ref, getCurrentInstance, onMounted, reactive, nextTick, computed} from "vue";
-import {ElMessage, ElMessageBox} from "element-plus";
+import {ElMessage, ElMessageBox, ElInput, ElDropdown, ElDropdownMenu, ElDropdownItem} from "element-plus";
 
 
 const tableData = ref([])
@@ -282,12 +291,13 @@ const tableLabel = reactive([
 
 const searchForm = reactive({
   source: 'All',
-  amp: 'KKFGKAAN',
+  amp: '',
   proClst80: '',
   ampClst: '',
   amplenmin: 1,
   amplenmax: 500,
 })
+
 const formRef = ref(null);
 
 // Computed property to check if at least one field is filled
@@ -295,6 +305,25 @@ const isValidForm = computed(() => {
   return Object.values(searchForm).some(value => value !== '' && value !== null);
 });
 
+const suggestions = ref(['KKFGKAAN', 'ASIKDFFKKIGDSIKKLFEKIFKP']);
+
+// 自动补全查询函数
+const querySearch = (queryString, cb) => {
+  if (!suggestions.value) return cb([]);
+
+  const lowerCaseQuery = queryString.toLowerCase();
+  const results = queryString
+    ? suggestions.value.filter(item => item.toLowerCase().includes(lowerCaseQuery))
+    : suggestions.value;
+  
+  cb(results);
+};
+
+// 处理选择项
+const handleSelect = (item) => {
+  console.log('Selected:', item);
+  searchForm.amp = item; // 更新表单中的值
+};
 // Handle search button click
 const onSearch = () => {
   ElMessage.success("Search submitted with data: " + JSON.stringify(searchForm));
@@ -322,16 +351,16 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 const goToGeneInformationPage = async (row) => {
-  console.log("sent:", row)
-  console.log("config", {tables : "human_gut_amps", source : row.Source, proID : row.ProID, position : row.Position})
+  console.log("goToGeneInformationPage sent:", row)
+  console.log("goToGeneInformationPage config", {tables : "human_gut_amps", source : row.Source, proID : row.ProID, position : row.Position})
     // 调用 API 获取数据
   const response = await proxy.$api.getAllAmpsData( {tables : "human_gut_amps", source : row.Source, proID : row.ProID, position : row.Position});
-  console.log("response", response.data);
+  console.log("goToGeneInformationPage response", response.data);
       // 处理 API 返回的数据
   if (response && response.data.length > 0) {
     row = response.data[0]
   }
-  console.log("row", row)
+  console.log("goToGeneInformationPage row", row)
 
   if (!row) return; // 确保 row 存在
   localStorage.setItem('oneGeneData', JSON.stringify(row)); // 存储 row 数据
@@ -348,7 +377,7 @@ const searchByProClst80 = (proClst80) => {
   // config.proClst80 = NaN
 };
 
-// 搜索所有 Pro_clst80 相同的数据
+// 搜索所有 AMPClst 相同的数据
 const searchByAMPClst = (AMPClst) => {
   ElMessage.success(`Searching for Pro_clst80: ${AMPClst}`);
   // 在这里添加实际的搜索逻辑
@@ -452,6 +481,21 @@ onMounted(()=>{
     text-align: center;
   }
 }
+.autocomplete-popper {
+  max-height: 200px; /* 设置最大高度 */
+  overflow-y: auto; /* 添加滚动条 */
+  width: 100%; /* 确保宽度与输入框一致 */
+}
+
+.suggestion-item {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  background-color: #f0f0f0;
+}
+
 .table{
   position: relative;
   height: 95%;

@@ -18,13 +18,22 @@ bucket = oss2.Bucket(auth, endpoint, "lscp-tools-data", region=region)
 import os
 from tqdm import tqdm
 for i in tqdm(os.listdir('/mnt/asustor/wenhui.li/02.AMP/structure/AFstr/Pro_clst80_pdbs')):
-    oss2.resumable_upload(bucket, 'AMP-SEMiner/Pro_clst80_pdbs/'+i, '/mnt/asustor/wenhui.li/02.AMP/structure/AFstr/Pro_clst80_pdbs/'+i)
+    destination_path = 'AMP-SEMiner/Pro_clst80_pdbs/' + i
+    
+    # Check if the file already exists
+    if not bucket.object_exists(destination_path):
+        oss2.resumable_upload(bucket, destination_path, '/mnt/asustor/wenhui.li/02.AMP/structure/AFstr/Pro_clst80_pdbs/' + i)
+    else:
+        print(f"Skipping {i}, file already exists.")
+
     # break
 # 列举Bucket下的10个文件。
 for b in islice(oss2.ObjectIterator(bucket), 10):
     print(b.key)
 
 exit()
+
+# 查询文件是否存在。
 # 填写Object完整路径，例如exampledir/exampleobject.txt。Object完整路径中不能包含Bucket名称。
 object_name = 'AMP-SEMiner/AMP_fragment_pdbs/327971|97769|256008|C412033:46-54.pdb'
 

@@ -152,14 +152,14 @@ In the configuration file, the `root` path specifies the directory where Nginx w
    Tag the image to point to your company's Docker registry:
 
    ```bash
-   docker tag amp_seminer_portal_frontend-nginx jackkuo666/amp_seminer_portal_frontend-nginx:v2
+   docker tag amp_seminer_portal_frontend-nginx jackkuo666/amp_seminer_portal_frontend-nginx:v10
    ```
 
 2. **Push the image**  
    Push the image to the specified Docker registry:
 
    ```bash
-   docker push jackkuo666/amp_seminer_portal_frontend-nginx:v2
+   docker push jackkuo666/amp_seminer_portal_frontend-nginx:v10
    ```
 
 3. **Notify the infrastructure team**  

@@ -40,6 +40,7 @@ show tables;
 CREATE DATABASE my_new_database;
 
 ## 3.导入表human_gut_amps
+```sql
 // 创建新tables;
 CREATE TABLE human_gut_amps (     AMP_clst INT,     Pro_clst80 INT,     Pro_clst INT,     Source VARCHAR(255),     ProID VARCHAR(255),     ID VARCHAR(255),     Position VARCHAR(255),     AMPlen INT,     AMP VARCHAR(255),     Sequence TEXT,     CID VARCHAR(255),     PDB VARCHAR(255),     DSSP VARCHAR(255),     AMPpdb VARCHAR(255) );
 
@@ -49,7 +50,9 @@ LOAD DATA INFILE '/var/lib/mysql-files/rmdup.human_gut.clst90_80.AMPclst95.repr_
 // 查看表格
 describe human_gut_amps;
 select * from human_gut_amps limit 2;
+```
 
+```sql
 // 查看用户
 mysql> SELECT CURRENT_USER();
 +----------------+
@@ -59,7 +62,22 @@ mysql> SELECT CURRENT_USER();
 
 // 删除表格
 drop table your_table_name 
+```
 
+
+### 重新构建huan_gut_amps
+
+```sql
+// 创建新tables;
+CREATE TABLE human_gut_amps (     AMP_clst INT,     Pro_clst80 INT,     Pro_clst INT,     Source VARCHAR(255),     ProID VARCHAR(255),     ID VARCHAR(255),           AMPID VARCHAR(255),    Position VARCHAR(255),     AMPlen INT,     AMP VARCHAR(255),     Sequence TEXT,     CID VARCHAR(255),     PDB VARCHAR(255),   DSSP VARCHAR(255),     AMPpdb VARCHAR(255) );
+
+// 新表格导入数据
+LOAD DATA INFILE '/var/lib/mysql-files/rmdup.human_gut.clst90_80.AMPclst95.repr_amp_pdb.txt' INTO TABLE human_gut_amps FIELDS TERMINATED BY '\t'   ENCLOSED BY '"'             LINES TERMINATED BY '\n'    IGNORE 1 ROWS;
+
+// 查看表格
+describe human_gut_amps;
+select * from human_gut_amps limit 2;
+```
 
 
 # 2.导入表all_amp_protein_animal
@@ -100,8 +118,6 @@ CREATE TABLE all_amp_protein_animal (
     PFAMs VARCHAR(255),
     CID VARCHAR(255)  -- 将 CID 也修改为 VARCHAR
 );
-
-
 ```
 
 ## 2.2 加载数据
@@ -153,20 +169,53 @@ SET
 
 ```
 
+## 2.3 优化表格
+### 2.3.1 提高检索效率
 
-提高检索效率
-
-```
+```sql
 CREATE INDEX idx_amp ON all_amp_protein_animal(AMP);
 CREATE INDEX idx_amplen ON all_amp_protein_animal(AMPlen);
 CREATE INDEX idx_proclst80 ON all_amp_protein_animal(Pro_clst80);
 CREATE INDEX idx_amp_clst ON all_amp_protein_animal(AMP_clst);
 
 ```
-针对amp新增FULLTEXT索引
+### 2.3.2 针对amp新增FULLTEXT索引
 ```sql
 ALTER TABLE all_amp_protein_animal ADD FULLTEXT(AMP);
 ```
+
+### 2.3.3 根据AMPID更新CID
+查询AMPID是否唯一
+```sql
+SELECT AMPID, COUNT(*)  FROM all_amp_protein_animal GROUP BY AMPID HAVING COUNT(*) > 1;
+```
+创建新的临时表：
+```sql
+CREATE TEMPORARY TABLE temp_eggnog_data (     Source VARCHAR(255),     ProID VARCHAR(255),     AMP VARCHAR(255),     AMPlen INT,     Position VARCHAR(255),     Sequence TEXT,     ID VARCHAR(255),     Pro_clst INT,     Pro_clst_rep VARCHAR(255),     Pro_clst80 INT,     AMPID VARCHAR(255),     AMP_clst INT,     seed_ortholog VARCHAR(255),     evalue DOUBLE,       score FLOAT,
+    eggNOG_OGs TEXT,     max_annot_lvl VARCHAR(255),     COG_category VARCHAR(255),     Description TEXT,     Preferred_name VARCHAR(255),     GOs TEXT,     EC VARCHAR(255),     KEGG_ko VARCHAR(255),     KEGG_Pathway TEXT,     KEGG_Module TEXT,     KEGG_Reaction TEXT,     KEGG_rclass TEXT,     BRITE VARCHAR(255),     KEGG_TC VARCHAR(255),     CAZy VARCHAR(255),     BiGG_Reaction TEXT,     PFAMs VARCHAR(255),     CID VARCHAR(255) );
+```
+加载数据：
+```sql
+LOAD DATA INFILE '/var/lib/mysql-files/all_amp_protein.animal.clst90_80.AMPclst95.eggnog.txt'  INTO TABLE temp_eggnog_data   FIELDS TERMINATED BY '\t'  ENCLOSED BY '"'  LINES TERMINATED BY '\n'  IGNORE 1 ROWS (     Source,     ProID,     AMP,     AMPlen,     Position,     Sequence,     ID,     Pro_clst,     Pro_clst_rep,     Pro_clst80,     AMPID,     AMP_clst,     seed_ortholog,     @evalue,       @score,        eggNOG_OGs,     max_annot_lvl,     COG_category,     Description,     Preferred_name,     GOs,     EC,     KEGG_ko,     KEGG_Pathway,     KEGG_Module,
+   KEGG_Reaction,     KEGG_rclass,     BRITE,     KEGG_TC,     CAZy,     BiGG_Reaction,     PFAMs,     CID ) SET      evalue = NULLIF(@evalue, '-'),      score = NULLIF(@score, '-');
+```
+
+更新 CID 字段：
+```sql
+CREATE INDEX idx_ampid_all_amp_protein_animal ON all_amp_protein_animal(AMPID);
+REATE INDEX idx_ampid_temp_eggnog_data ON temp_eggnog_data(AMPID);
+
+UPDATE all_amp_protein_animal a
+JOIN temp_eggnog_data t ON a.AMPID = t.AMPID
+SET a.CID = t.CID;
+```
+删除临时表：
+
+```sql
+DROP TEMPORARY TABLE IF EXISTS temp_eggnog_data;
+```
+
+
 # 3.导入表 SeqProperties
 ```
 cp /mnt/asustor/wenhui.li/02.AMP/predict/outputs/Token_650M_epoch15/Properties/*Properties.txt /var/lib/mysql-files/

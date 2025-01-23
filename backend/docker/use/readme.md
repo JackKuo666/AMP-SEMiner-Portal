@@ -56,3 +56,16 @@ Image not used by any container
 unused network
 
 unused volume
+
+
+```sql
+//如果更新了mysql，需要删除删除 MySQL 数据卷的缓存
+docker volume ls
+docker volume rm <volume_name>
+
+```
+
+#### 验证，搜索AMP
+KKFGKAAN
+
+ASIKDFFKKIGDSIKKLFEKIFKP
