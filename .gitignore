@@ -1,3 +1,4 @@
 *.env
 backend/data_source/*.txt
 amps_backup.sql
+backend/oss_pdb/log_up_pdb_to_oss.txt
