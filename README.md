@@ -38,7 +38,20 @@ in step **1.use npm run preview**
 in step **2.docker run**
 
 # Citation
-TBD
+```bibtex
+@article{LI2025115773,
+title = {Unveiling the evolution of antimicrobial peptides in gut microbes via foundation-model-powered framework},
+journal = {Cell Reports},
+volume = {44},
+number = {6},
+pages = {115773},
+year = {2025},
+issn = {2211-1247},
+doi = {https://doi.org/10.1016/j.celrep.2025.115773},
+url = {https://www.sciencedirect.com/science/article/pii/S2211124725005443},
+author = {Wenhui Li and Baicheng Huang and Menghao Guo and Zihan Zeng and Tao Cai and Linqing Feng and Xinpeng Zhang and Ling Guo and Xianyue Jiang and Yanbin Yin and Ercheng Wang and Xingxu Huang and Jinfang Zheng},
+keywords = {antimicrobial peptides, protein language model, protein structure, evolution, human gut microbiota},
+```
 
 # Contact
 
